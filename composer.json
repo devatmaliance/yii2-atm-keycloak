@@ -1,0 +1,44 @@
+{
+    "name": "atmaliance/yii2-atm-keycloak",
+    "description": "Package",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","atm72","keycloak","auth"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vitaliy Popov",
+            "email": "popov.v.o@atm72.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "yiisoft/yii2": "2.*",
+        "sizeg/yii2-jwt": "^2.0",
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "symfony/property-access": "^5.4",
+        "symfony/property-info": "^5.4",
+        "symfony/serializer": "^5.4",
+        "doctrine/annotations": "^2.0",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "autoload": {
+        "psr-4": {
+            "atmaliance\\yii2_keycloak\\": "src"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    }
+}
