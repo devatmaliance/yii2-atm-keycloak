@@ -14,6 +14,8 @@ use atmaliance\yii2_keycloak\models\serializer\Serializer;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Lcobucci\JWT\Claim;
 use Throwable;
@@ -139,10 +141,17 @@ final class KeycloakFetcher
      * @throws KeycloakFetcherException
      * @throws KeycloakUserException
      * @throws ExceptionInterface
+     * @throws ReflectionException
      * Get user attributes
      */
     public function getUserInfo(string $accessToken): KeycloakUserInformationInterface
     {
+        $userInformationDTOClass = Yii::$app->keycloakService->getConfiguration()->getUserInformationDTOClass();
+
+        if (!(new ReflectionClass($userInformationDTOClass))->implementsInterface(KeycloakUserInformationInterface::class)) {
+            throw new KeycloakUserException(sprintf('The dto class [%s] does not implement the interface [%s]', $userInformationDTOClass, KeycloakUserInformationInterface::class));
+        }
+
         if (Yii::$app->keycloakService->getConfiguration()->canExtractUserInformationInAccessToken()) {
             $userInfo = [];
 
@@ -151,7 +160,7 @@ final class KeycloakFetcher
                 $userInfo[$claim->getName()] = $claim->getValue();
             }
 
-            return (new Normalizer())->denormalize($userInfo, Yii::$app->keycloakService->getConfiguration()->getUserInformationDTOClass());
+            return (new Normalizer())->denormalize($userInfo, $userInformationDTOClass);
         }
 
         $response = $this->httpClient->request('GET', $this->getOpenIdValue('userinfo_endpoint'), [
@@ -172,6 +181,6 @@ final class KeycloakFetcher
             );
         }
 
-        return (new Serializer())->deserialize($response->getBody()->getContents(), Yii::$app->keycloakService->getConfiguration()->getUserInformationDTOClass());
+        return (new Serializer())->deserialize($response->getBody()->getContents(), $userInformationDTOClass);
     }
 }
