@@ -9,7 +9,7 @@ use atmaliance\yii2_keycloak\models\KeycloakFetcher;
 use sizeg\jwt\JwtValidationData;
 use Yii;
 
-final class KeycloakJwtValidator extends JwtValidationData
+class KeycloakJwtValidator extends JwtValidationData
 {
     /**
      * @return void
