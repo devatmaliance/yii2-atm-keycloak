@@ -10,6 +10,7 @@ use yii\helpers\Url;
 final class KeycloakConfigurationDTO
 {
     private KeycloakUserInformationHandlerInterface $userInformationHandler;
+    private string $userInformationDTOClass;
     private string $baseUrl;
     private string $realm;
     private string $callbackUrl;
@@ -20,6 +21,7 @@ final class KeycloakConfigurationDTO
 
     public function __construct(
         KeycloakUserInformationHandlerInterface $userInformationHandler,
+        string $userInformationDTOClass,
         string $baseUrl,
         string $realm,
         string $clientId,
@@ -29,6 +31,7 @@ final class KeycloakConfigurationDTO
         bool $canExtractUserInformationInAccessToken = true
     ) {
         $this->userInformationHandler = $userInformationHandler;
+        $this->userInformationDTOClass = $userInformationDTOClass;
         $this->baseUrl = $baseUrl;
         $this->realm = $realm;
         $this->clientId = $clientId;
@@ -41,6 +44,11 @@ final class KeycloakConfigurationDTO
     public function getUserInformationHandler(): KeycloakUserInformationHandlerInterface
     {
         return $this->userInformationHandler;
+    }
+
+    public function getUserInformationDTOClass(): string
+    {
+        return $this->userInformationDTOClass;
     }
 
     public function getBaseUrl(): string

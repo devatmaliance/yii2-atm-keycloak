@@ -7,8 +7,8 @@ namespace atmaliance\yii2_keycloak\models;
 use atmaliance\yii2_keycloak\exceptions\KeycloakFetcherException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakTokenException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakUserException;
+use atmaliance\yii2_keycloak\models\dto\contract\KeycloakUserInformationInterface;
 use atmaliance\yii2_keycloak\models\dto\KeycloakTokenAttributeDTO;
-use atmaliance\yii2_keycloak\models\dto\KeycloakUserInformationDTO;
 use atmaliance\yii2_keycloak\models\serializer\Normalizer;
 use atmaliance\yii2_keycloak\models\serializer\Serializer;
 use Exception;
@@ -134,14 +134,14 @@ final class KeycloakFetcher
 
     /**
      * @param string $accessToken
-     * @return KeycloakUserInformationDTO
+     * @return KeycloakUserInformationInterface
      * @throws GuzzleException
      * @throws KeycloakFetcherException
-     * @throws KeycloakUserException|
+     * @throws KeycloakUserException
      * @throws ExceptionInterface
      * Get user attributes
      */
-    public function getUserInfo(string $accessToken): KeycloakUserInformationDTO
+    public function getUserInfo(string $accessToken): KeycloakUserInformationInterface
     {
         if (Yii::$app->keycloakService->getConfiguration()->canExtractUserInformationInAccessToken()) {
             $userInfo = [];
@@ -151,7 +151,7 @@ final class KeycloakFetcher
                 $userInfo[$claim->getName()] = $claim->getValue();
             }
 
-            return (new Normalizer())->denormalize($userInfo, KeycloakUserInformationDTO::class);
+            return (new Normalizer())->denormalize($userInfo, Yii::$app->keycloakService->getConfiguration()->getUserInformationDTOClass());
         }
 
         $response = $this->httpClient->request('GET', $this->getOpenIdValue('userinfo_endpoint'), [
@@ -172,6 +172,6 @@ final class KeycloakFetcher
             );
         }
 
-        return (new Serializer())->deserialize($response->getBody()->getContents(), KeycloakUserInformationDTO::class);
+        return (new Serializer())->deserialize($response->getBody()->getContents(), Yii::$app->keycloakService->getConfiguration()->getUserInformationDTOClass());
     }
 }

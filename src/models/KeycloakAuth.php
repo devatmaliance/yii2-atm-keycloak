@@ -6,7 +6,7 @@ namespace atmaliance\yii2_keycloak\models;
 
 use atmaliance\yii2_keycloak\exceptions\KeycloakTokenException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakUserException;
-use atmaliance\yii2_keycloak\models\dto\KeycloakUserInformationDTO;
+use atmaliance\yii2_keycloak\models\dto\contract\KeycloakUserInformationInterface;
 use atmaliance\yii2_keycloak\models\validator\KeycloakIdTokenValidator;
 use atmaliance\yii2_keycloak\models\validator\KeycloakUserValidator;
 use GuzzleHttp\Exception\GuzzleException;
@@ -50,10 +50,10 @@ final class KeycloakAuth
 
     /**
      * @param KeycloakToken $keycloakToken
-     * @return KeycloakUserInformationDTO|null
+     * @return KeycloakUserInformationInterface|null
      * get user attributes
      */
-    private function getUserInformationDTO(KeycloakToken $keycloakToken): ?KeycloakUserInformationDTO
+    private function getUserInformationDTO(KeycloakToken $keycloakToken): ?KeycloakUserInformationInterface
     {
         try {
             $keycloakToken = $keycloakToken->refreshTokenIfNeeded();
