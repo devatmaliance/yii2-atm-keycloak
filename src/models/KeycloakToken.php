@@ -108,7 +108,7 @@ final class KeycloakToken
      * @throws KeycloakTokenException
      * Refresh access token
      */
-    public function refreshAccessToken(string $refreshToken): KeycloakTokenAttributeDTO
+    private function refreshAccessToken(string $refreshToken): KeycloakTokenAttributeDTO
     {
         $response = (new Client())->request('POST', (new KeycloakFetcher())->getOpenIdValue('token_endpoint'), [
             'form_params' => [
