@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace atmaliance\yii2_keycloak\bootstrap;
 
+use atmaliance\yii2_keycloak\KeycloakService;
 use atmaliance\yii2_keycloak\models\KeycloakAuth;
 use Throwable;
 use Yii;
@@ -26,6 +27,7 @@ class KeycloakBootstrap implements BootstrapInterface
             return;
         }
 
+        /* @var KeycloakService $keycloakService */
         $keycloakService = $app->keycloakService ?? null;
 
         if (null === $keycloakService) {
