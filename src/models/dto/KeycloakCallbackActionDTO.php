@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 final class KeycloakCallbackActionDTO
 {
-    private string $code;
+    private ?string $code;
     private ?string $state;
     private ?string $error;
 
@@ -18,7 +18,7 @@ final class KeycloakCallbackActionDTO
     private ?string $errorDescription;
 
     public function __construct(
-        string $code,
+        ?string $code,
         ?string $state,
         ?string $error,
         ?string $errorDescription
@@ -34,7 +34,7 @@ final class KeycloakCallbackActionDTO
         return $this->state;
     }
 
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }

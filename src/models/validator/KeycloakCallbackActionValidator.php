@@ -17,6 +17,11 @@ final class KeycloakCallbackActionValidator
             $this->errors[] = $keycloakCallbackActionDTO->getErrorDescription() ?? $keycloakCallbackActionDTO->getError();
         }
 
+        // Check authorization code
+        if (empty($keycloakCallbackActionDTO->getCode())) {
+            $this->errors[] = 'Authorization code empty';
+        }
+
         // Check given state to mitigate CSRF attack
         if (!((new KeycloakStateValidator())->validate($keycloakCallbackActionDTO->getState()))) {
             $this->errors[] = 'Invalid state';

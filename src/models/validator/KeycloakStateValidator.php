@@ -12,6 +12,6 @@ final class KeycloakStateValidator
     {
         $currentState = KeycloakState::getValue();
 
-        return (!empty($currentState) && !empty($incomingState) && $incomingState === $currentState);
+        return !empty($currentState) && !empty($incomingState) && $incomingState === $currentState;
     }
 }
