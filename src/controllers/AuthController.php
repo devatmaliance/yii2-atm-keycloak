@@ -33,7 +33,7 @@ class AuthController extends Controller
             return parent::beforeAction($action);
         }
 
-        if (Yii::$app->keycloakService->getToken()->isInit()) {
+        if (!Yii::$app->user->isGuest || Yii::$app->keycloakService->getToken()->isInit()) {
             $this->redirect(Url::home(true))->send();
 
             return false;
