@@ -30,10 +30,7 @@ final class KeycloakAuth
                 throw new KeycloakUserException('empty user information');
             }
 
-            $auth = Yii::$app->user;
-            $auth->enableSession = false;
-
-            if (!$auth->login(Yii::$app->keycloakService->getConfiguration()->getUserInformationHandler()->handle($userInformationDTO))) {
+            if (!Yii::$app->user->login(Yii::$app->keycloakService->getConfiguration()->getUserInformationHandler()->handle($userInformationDTO))) {
                 throw new RuntimeException('login error');
             }
 
