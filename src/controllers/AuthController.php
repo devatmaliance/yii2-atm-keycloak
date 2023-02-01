@@ -82,6 +82,10 @@ class AuthController extends Controller
     public function actionLogout(): Response
     {
         try {
+            if (Yii::$app->user->enableSession) {
+                Yii::$app->user->logout();
+            }
+
             return $this->redirect((new KeycloakUrl())->getLogoutUrl());
         } catch (Throwable $exception) {
             Yii::error(sprintf('[Keycloak Controller Error] %s', $exception->getMessage()));
