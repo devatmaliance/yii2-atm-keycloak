@@ -66,6 +66,7 @@ final class KeycloakAuth
                 throw new KeycloakTokenException('invalid id token');
             }
 
+            /* @todo $attributes->getAccessToken() заменить на $attributes->getIdToken() */
             $userInformationDTO = (new KeycloakFetcher())->getUserInfo($attributes->getAccessToken());
 
             if (!(new KeycloakUserValidator())->validate($parsedIdToken, $userInformationDTO->getUuid())) {
