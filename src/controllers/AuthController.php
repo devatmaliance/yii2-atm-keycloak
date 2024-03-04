@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace atmaliance\yii2_keycloak\controllers;
 
+use atmaliance\yii2_keycloak\exceptions\KeycloakException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakCallbackException;
 use atmaliance\yii2_keycloak\models\dto\KeycloakCallbackActionDTO;
 use atmaliance\yii2_keycloak\models\KeycloakAuth;
@@ -137,6 +138,6 @@ class AuthController extends Controller
 
         Yii::$app->keycloakService->getToken()->forget();
 
-        throw new HttpException(503, Yii::t('app/keycloak', 'Не удалось авторизоваться'));
+        throw new KeycloakException(503, Yii::t('app/keycloak', 'Не удалось авторизоваться'));
     }
 }
