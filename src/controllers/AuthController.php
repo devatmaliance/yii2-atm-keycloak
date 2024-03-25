@@ -72,7 +72,7 @@ class AuthController extends Controller
             Yii::error(sprintf('[Keycloak Controller Error] %s', $exception->getMessage()));
         }
 
-        throw new HttpException(503, Yii::t('app/keycloak', 'Не удалось начать процесс авторизации'));
+        throw new HttpException(503, 'Не удалось начать процесс авторизации');
     }
 
     /**
@@ -92,7 +92,7 @@ class AuthController extends Controller
             Yii::error(sprintf('[Keycloak Controller Error] %s', $exception->getMessage()));
         }
 
-        throw new HttpException(503, Yii::t('app/keycloak', 'Не удалось выйти из системы'));
+        throw new HttpException(503, 'Не удалось выйти из системы');
     }
 
     /**
@@ -108,7 +108,7 @@ class AuthController extends Controller
             Yii::error(sprintf('[Keycloak Controller Error] %s', $exception->getMessage()));
         }
 
-        throw new HttpException(503, Yii::t('app/keycloak', 'Не удалось начать процесс регистрации'));
+        throw new HttpException(503, 'Не удалось начать процесс регистрации');
     }
 
     /**
@@ -137,6 +137,6 @@ class AuthController extends Controller
 
         Yii::$app->keycloakService->getToken()->forget();
 
-        throw new KeycloakException(503, Yii::t('app/keycloak', 'Не удалось авторизоваться'));
+        throw new KeycloakException(503, 'Не удалось авторизоваться');
     }
 }
