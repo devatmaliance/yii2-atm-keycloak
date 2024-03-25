@@ -129,9 +129,8 @@ class AuthController extends Controller
 
             $keycloakToken = Yii::$app->keycloakService->getToken()->init((new KeycloakFetcher())->getTokenInformation($keycloakCallbackActionDTO->getCode()));
 
-            if ((new KeycloakAuth())->authenticate($keycloakToken)) {
-                return $this->redirect(Url::to(Yii::$app->user->getReturnUrl(Url::home(true)), true));
-            }
+            (new KeycloakAuth())->authenticate($keycloakToken);
+            return $this->redirect(Url::to(Yii::$app->user->getReturnUrl(Url::home(true)), true));
         } catch (Throwable $exception) {
             Yii::error(sprintf('[Keycloak Controller Error] %s', $exception->getMessage()));
         }

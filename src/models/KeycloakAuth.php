@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace atmaliance\yii2_keycloak\models;
 
+use atmaliance\yii2_keycloak\exceptions\KeycloakFetcherException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakTokenException;
 use atmaliance\yii2_keycloak\exceptions\KeycloakUserException;
 use atmaliance\yii2_keycloak\models\dto\contract\KeycloakUserInformationInterface;
@@ -21,12 +22,11 @@ final class KeycloakAuth
      * @return bool
      * authenticate user
      */
-    public function authenticate(KeycloakToken $keycloakToken): bool
+    public function authenticate(KeycloakToken $keycloakToken): void
     {
         try {
             $userInformationDTO = $this->getUserInformationDTO($keycloakToken);
-
-            if (null === $userInformationDTO) {
+            if (!$userInformationDTO) {
                 throw new KeycloakUserException('empty user information');
             }
 
@@ -34,51 +34,45 @@ final class KeycloakAuth
                 throw new RuntimeException('login error');
             }
 
-            return true;
-        } catch (KeycloakUserException $exception) {
+            return;
         } catch (Throwable $exception) {
             Yii::error(sprintf('[Keycloak User Error] %s', $exception->getMessage()));
         }
 
         $keycloakToken->forget();
-
-        return false;
+        throw new RuntimeException('login error');
     }
 
     /**
      * @param KeycloakToken $keycloakToken
-     * @return KeycloakUserInformationInterface|null
-     * get user attributes
+     * @return KeycloakUserInformationInterface
+     * @throws KeycloakTokenException
+     * @throws KeycloakUserException
+     * @throws \ReflectionException
+     * @throws KeycloakFetcherException
      */
-    private function getUserInformationDTO(KeycloakToken $keycloakToken): ?KeycloakUserInformationInterface
+    private function getUserInformationDTO(KeycloakToken $keycloakToken): KeycloakUserInformationInterface
     {
-        try {
-            $keycloakToken = $keycloakToken->refreshTokenIfNeeded();
-            $attributes = $keycloakToken->getAttributes();
+        $keycloakToken = $keycloakToken->refreshTokenIfNeeded();
+        $attributes = $keycloakToken->getAttributes();
 
-            if (null === $attributes) {
-                throw new KeycloakTokenException('attributes is not init');
-            }
-
-            $parsedIdToken = Yii::$app->keycloakJwt->getParser()->parse($attributes->getIdToken());
-
-            if (!(new KeycloakIdTokenValidator())->validate($parsedIdToken)) {
-                throw new KeycloakTokenException('invalid id token');
-            }
-
-            /* @todo $attributes->getAccessToken() заменить на $attributes->getIdToken() */
-            $userInformationDTO = (new KeycloakFetcher())->getUserInfo($attributes->getAccessToken());
-
-            if (!(new KeycloakUserValidator())->validate($parsedIdToken, $userInformationDTO->getUuid())) {
-                throw new KeycloakUserException('user is not owner of token');
-            }
-
-            return $userInformationDTO;
-        } catch (GuzzleException $exception) {
-        } catch (Throwable $exception) {
-            Yii::error(sprintf('[Keycloak User Error] %s', $exception->getMessage()));
+        if (null === $attributes) {
+            throw new KeycloakTokenException('attributes is not init');
         }
 
-        return null;
+        $parsedIdToken = Yii::$app->keycloakJwt->getParser()->parse($attributes->getIdToken());
+
+        if (!(new KeycloakIdTokenValidator())->validate($parsedIdToken)) {
+            throw new KeycloakTokenException('invalid id token');
+        }
+
+        /* @todo $attributes->getAccessToken() заменить на $attributes->getIdToken() */
+        $userInformationDTO = (new KeycloakFetcher())->getUserInfo($attributes->getAccessToken());
+
+        if (!(new KeycloakUserValidator())->validate($parsedIdToken, $userInformationDTO->getUuid())) {
+            throw new KeycloakUserException('user is not owner of token');
+        }
+
+        return $userInformationDTO;
     }
 }
