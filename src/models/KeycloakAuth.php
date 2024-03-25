@@ -25,8 +25,9 @@ final class KeycloakAuth
     {
         try {
             $userInformationDTO = $this->getUserInformationDTO($keycloakToken);
+            $user = Yii::$app->keycloakService->getConfiguration()->getUserInformationHandler()->handle($userInformationDTO);
 
-            if (!Yii::$app->user->login(Yii::$app->keycloakService->getConfiguration()->getUserInformationHandler()->handle($userInformationDTO))) {
+            if (!Yii::$app->user->login($user)) {
                 throw new RuntimeException('login error');
             }
 
