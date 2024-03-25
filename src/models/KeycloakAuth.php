@@ -19,16 +19,12 @@ final class KeycloakAuth
 {
     /**
      * @param KeycloakToken $keycloakToken
-     * @return bool
-     * authenticate user
+     * @return void
      */
     public function authenticate(KeycloakToken $keycloakToken): void
     {
         try {
             $userInformationDTO = $this->getUserInformationDTO($keycloakToken);
-            if (!$userInformationDTO) {
-                throw new KeycloakUserException('empty user information');
-            }
 
             if (!Yii::$app->user->login(Yii::$app->keycloakService->getConfiguration()->getUserInformationHandler()->handle($userInformationDTO))) {
                 throw new RuntimeException('login error');
@@ -56,7 +52,7 @@ final class KeycloakAuth
         $keycloakToken = $keycloakToken->refreshTokenIfNeeded();
         $attributes = $keycloakToken->getAttributes();
 
-        if (null === $attributes) {
+        if (!$attributes) {
             throw new KeycloakTokenException('attributes is not init');
         }
 
